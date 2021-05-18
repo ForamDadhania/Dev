@@ -113,13 +113,19 @@ class LoginViewController: UIViewController {
             return
         }
         
-        FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password, completion: { authResult, error in
+        //Firebase log in
+        FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password, completion: { [weak self] authResult, error in
+            guard let strongSelf = self else {
+                return
+            }
             guard let result = authResult, error == nil else {
                 print("Error in logging user with email: \(email)")
                 return 
             }
+            
             let user = result.user
             print("Successfully loggin user: \(user)")
+            strongSelf.navigationController?.dismiss(animated: true, completion: nil)
         })
     }
     
@@ -136,7 +142,6 @@ class LoginViewController: UIViewController {
         navigationController?.pushViewController(vc, animated: true)
         
     }
-
 }
 
 extension LoginViewController: UITextFieldDelegate {
