@@ -8,6 +8,7 @@
 import UIKit
 import FirebaseAuth
 import FBSDKLoginKit
+import GoogleSignIn
 
 class LoginViewController: UIViewController {
     
@@ -71,9 +72,25 @@ class LoginViewController: UIViewController {
         return button
     }()
     
+    private let googleSigninButton = GIDSignInButton()
+    
+    private var loginObserver: NSObjectProtocol?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
+        
+        loginObserver = NotificationCenter.default.addObserver(forName: .didLogInNotification, object: nil, queue: .main, using: { [weak self] _ in
+            
+            guard let strongSelf = self else {
+                return
+            }
+            
+            strongSelf.navigationController?.dismiss(animated: true, completion: nil)
+        })
+        
+        
+        GIDSignIn.sharedInstance()?.presentingViewController = self
         title = "Log In"
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Register",
@@ -95,8 +112,14 @@ class LoginViewController: UIViewController {
         scrollView.addSubview(passwordField)
         scrollView.addSubview(loginButton)
         scrollView.addSubview(facebookLoginButton)
+        scrollView.addSubview(googleSigninButton)
     }
     
+    deinit {
+        if let observer = loginObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         scrollView.frame = view.bounds
@@ -111,7 +134,9 @@ class LoginViewController: UIViewController {
         loginButton.frame = CGRect(x: 60, y: passwordField.bottom + 50, width: scrollView.width - 120, height: 52)
         
         facebookLoginButton.frame = CGRect(x: 30, y: loginButton.bottom + 40, width: scrollView.width - 60, height: 32)
-        facebookLoginButton.center = scrollView.center
+        
+        googleSigninButton.frame = CGRect(x: 30, y: facebookLoginButton.bottom + 40, width: scrollView.width - 60, height: 32)
+       
     }
     
     
