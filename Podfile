@@ -8,11 +8,17 @@ target 'Messanger' do
 pod 'Firebase/Auth'
 pod 'Firebase/Core'
 pod 'Firebase/Database'
+pod 'Firebase/Storage'
 
 #Facebook
 pod 'FBSDKLoginKit'
 
 #Google signing
 pod 'GoogleSignIn'
+
+pod 'MessageKit'
+pod 'JGProgressHUD'
+pod 'RealmSwift'
+pod 'SDWebImage'
 
 end
